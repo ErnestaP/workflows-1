@@ -3,6 +3,11 @@
 Welcome to your new Dagster repository.
 
 
+## Pre required
+
+1. Install ["poetry"](https://python-poetry.org/docs/)
+
+2.
 ## Getting up and running
 
 1. Create a new Python environment and activate.
@@ -22,7 +27,7 @@ using the `--editable` flag, `pip` will install your repository in
 so that as you develop, local code changes will automatically apply.
 
 ```bash
-pip install --editable .
+poetry install
 ```
 
 ## Local Development
@@ -38,7 +43,7 @@ export DAGSTER_HOME=~/dagster_home
 server that, by default, is served on http://localhost:3000.
 
 ```bash
-dagit
+poetry run dagit
 ```
 
 3. (Optional) If you want to enable Dagster
@@ -47,7 +52,7 @@ dagit
 [Dagster Daemon process](https://docs.dagster.io/overview/daemon#main) **in a different shell or terminal**:
 
 ```bash
-dagster-daemon run
+poetry run dagster-daemon run
 ```
 
 ## Local Testing
@@ -55,7 +60,7 @@ dagster-daemon run
 Tests can be found in `workflows_tests` and are run with the following command:
 
 ```bash
-pytest workflows_tests
+poetry run pytest workflows_tests
 ```
 
 As you create Dagster solids and pipelines, add tests in `workflows_tests/` to check that your
