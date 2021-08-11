@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *.pyc
+.pytest_cache/
 
 # Idea software family
 .idea/
