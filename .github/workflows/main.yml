@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request_target:
+    branches: [master]
+
+env:
+  REF: ${{ github.event.pull_request.head.sha || github.sha }}
+  REF_TAG: ref-${{ github.event.pull_request.head.sha || github.sha }}
+  PR: ${{ github.event.pull_request.number }}
+  PR_TAG: pr-${{ github.event.pull_request.number }}
+  BUILD_TAG: build-${{ github.event.pull_request.head.sha || github.sha }}
+
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.REF }}
+      - name: Install pre requirements
+        run: pip install poetry==1.0.10
+      - name: Install
+        run: poetry install
+      - name: Run tests
+        run: poetry run pytest workflows_tests
