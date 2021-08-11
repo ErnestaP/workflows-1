@@ -3,11 +3,10 @@
 Welcome to your new Dagster repository.
 
 
-## Pre required
+## Pre requirements
 
-1. Install ["poetry"](https://python-poetry.org/docs/)
+1. Install [poetry](https://python-poetry.org/docs/)
 
-2.
 ## Getting up and running
 
 1. Create a new Python environment and activate.
@@ -21,10 +20,7 @@ pyenv activate workflows
 ```
 
 
-2. Once you have activated your Python environment, install your repository as a Python package. By
-using the `--editable` flag, `pip` will install your repository in
-["editable mode"](https://pip.pypa.io/en/latest/reference/pip_install/?highlight=editable#editable-installs)
-so that as you develop, local code changes will automatically apply.
+2. Once you have activated your Python environment, install your repository as a Python package.
 
 ```bash
 poetry install
