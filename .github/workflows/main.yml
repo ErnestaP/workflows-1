@@ -8,10 +8,6 @@ on:
 
 env:
   REF: ${{ github.event.pull_request.head.sha || github.sha }}
-  REF_TAG: ref-${{ github.event.pull_request.head.sha || github.sha }}
-  PR: ${{ github.event.pull_request.number }}
-  PR_TAG: pr-${{ github.event.pull_request.number }}
-  BUILD_TAG: build-${{ github.event.pull_request.head.sha || github.sha }}
 
 
 jobs:
@@ -23,9 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ env.REF }}
-      - name: Install pre requirements
-        run: pip install poetry==1.0.10
-      - name: Install
-        run: poetry install
+      - name: Docker build
+        run: docker build . -t scoap3/workflows:${REF}
       - name: Run tests
-        run: poetry run pytest workflows_tests
+        run: docker run --rm scoap3/workflows:${REF} pytest workflows_tests
