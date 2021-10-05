@@ -45,7 +45,7 @@ poetry run dagit
 3. Start running with [Dagster CLI](https://docs.dagster.io/concepts/modes-resources#dagster-cli). In preset, the [mode](https://github.com/ErnestaP/workflows-1/blob/master/workflows/pipelines/my_pipeline.py#L18-L43) has to be set.
 
 ```bash
-poetry run  dagster pipeline execute -f workflows/pipelines/my_pipeline.py --preset <preset you want to run>
+poetry run dagster pipeline execute -f workflows/pipelines/my_pipeline.py --preset <preset you want to run>
 ```
 
 4. (Optional) If you want to enable Dagster
