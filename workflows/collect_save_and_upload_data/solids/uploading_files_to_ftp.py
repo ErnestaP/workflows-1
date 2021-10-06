@@ -35,8 +35,7 @@ def uploading_files_to_ftp(context, ftp):
 
     # uploading dummy test file to ftp server
     for file_name in DUMMY_FILES_NAMES:
-        pass
-        # ftp.upload_if_newer(file_name, file_name)
+        ftp.upload_if_newer(file_name, file_name)
 
     dirs_list = ftp.listdir(path)
 
