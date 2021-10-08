@@ -14,7 +14,8 @@ from workflows.utils.generators import generate_mapping_key
 
 @solid(required_resource_keys={"ftp"},
        input_defs=[InputDefinition(name='ftp', dagster_type=FTPDagsterType),
-                   InputDefinition("start", Nothing)],
+                   InputDefinition("start", Nothing)
+                   ],
        output_defs=[DynamicOutputDefinition(dict)])
 def collect_files_to_download(context, ftp) -> list:
     """
@@ -32,6 +33,7 @@ def collect_files_to_download(context, ftp) -> list:
             if filename.startswith('.'):
                 continue
             full_path = os.path.join(path, filename)
+            context.log.info(full_path)
             if filename.endswith('.zip') or filename == 'go.xml':
                 yield DynamicOutput(value={'file_path': full_path, 'ftp': ftp},
                                     mapping_key=generate_mapping_key())

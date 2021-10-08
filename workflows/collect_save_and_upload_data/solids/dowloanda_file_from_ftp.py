@@ -18,4 +18,6 @@ def download_a_file_from_ftp(context, file_object):
     dir_name = os.path.dirname(file_object['file_path'])
     file_object['ftp'].download_if_newer(file_object['file_path'], local_filename)
     context.log.info(f'File {new_file_name} with path {dir_name} to {target_folder}')
+    return local_filename
+
     

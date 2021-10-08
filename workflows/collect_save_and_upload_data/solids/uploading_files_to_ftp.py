@@ -2,18 +2,17 @@ import os
 from dagster import solid, InputDefinition
 
 from workflows.dagster_types import FTPDagsterType
-from workflows.constants import LOCAL_FOLDER_FOR_DOWNLOADED_FILES, DUMMY_FILES_NAMES
+from workflows.constants import LOCAL_FOLDER_FOR_DOWNLOADED_FILES
+
+
+def upload_file(ftp, name):
+    ftp.upload_if_newer(name, name)
 
 
 @solid(required_resource_keys={"ftp"},
        input_defs=[InputDefinition(name='ftp', dagster_type=FTPDagsterType)])
 def uploading_files_to_ftp(context, ftp):
     ftp_folder = context.resources.ftp["ftp_folder"]
-    # creating dummy file for uploading to the server
-    for file_name in DUMMY_FILES_NAMES:
-        f = open(file_name, "w")
-        f.close()
-
     if os.path.exists(os.path.join(os.getcwd(), LOCAL_FOLDER_FOR_DOWNLOADED_FILES)):
         context.log.warn(f'{LOCAL_FOLDER_FOR_DOWNLOADED_FILES} folder already exists')
         pass
@@ -33,9 +32,11 @@ def uploading_files_to_ftp(context, ftp):
     ftp.chdir(ftp_folder)
     path = ftp.getcwd()
 
-    # uploading dummy test file to ftp server
-    for file_name in DUMMY_FILES_NAMES:
-        ftp.upload_if_newer(file_name, file_name)
+    # uploading example file to ftp server
+    
+    # ftp.upload_if_newer('oup.xml.zip', 'oup.xml.zip')
+    # ftp.upload_if_newer('scoap3.archival.zip', 'scoap3.archival.zip')
+    ftp.upload_if_newer('scoap3.pdf.zip', 'scoap3.pdf.zip')
 
     dirs_list = ftp.listdir(path)
 

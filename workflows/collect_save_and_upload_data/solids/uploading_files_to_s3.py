@@ -3,7 +3,7 @@ from dagster import solid, InputDefinition, Nothing, String, DynamicOutputDefini
 import boto3
 
 from workflows.utils.generators import generate_mapping_key
-from workflows.constants import DUMMY_FILES_SUB_KEY
+from workflows.constants import DUMMY_FILES_SUB_KEY, UNZIPED_FILES
 
 
 @solid(required_resource_keys={"aws"},
@@ -30,11 +30,11 @@ def uploading_files_to_s3(context):
     bucket_name = context.resources.aws["raw_files_bucket"]
 
     pwd = os.getcwd()
-    path_to_files = os.path.join(pwd, 'downloaded')
+    path_to_files = os.path.join(pwd, UNZIPED_FILES)
     file_names = [file_name for file_name in os.listdir(path_to_files) if
                   os.path.isfile(os.path.join(path_to_files, file_name))]
     for file_name in file_names:
-        path_to_file = os.path.join(pwd, f'downloaded/{file_name}')
+        path_to_file = os.path.join(pwd, f'{UNZIPED_FILES}/{file_name}')
         key = f"{DUMMY_FILES_SUB_KEY}/{file_name}"
 
         s3_resource.Bucket(bucket_name).put_object(
@@ -47,6 +47,5 @@ def uploading_files_to_s3(context):
         # keys, which ended with '/' are dirs, we need just files
         # files, which we want to download from s3
         if not key['Key'].endswith('/') and f'{DUMMY_FILES_SUB_KEY}/' in key['Key']:
-            context.log.info(key['Key'])
             yield DynamicOutput(value=key['Key'],
                                 mapping_key=generate_mapping_key())

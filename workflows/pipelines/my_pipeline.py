@@ -7,6 +7,7 @@ from workflows.collect_save_and_upload_data.composite_solids.get_files_from_ftp_
 from workflows.collect_save_and_upload_data.solids.download_file_from_s3 import download_file_from_s3
 from workflows.collect_save_and_upload_data.solids.crawler_parser import crawler_parser
 from workflows.steps.composite_solids.run_all_steps import run_all_steps
+from workflows.clean_local_ftp_s3_dirs.combined_cleaning import clean_everything
 
 path_of_ftp_resources_yaml = get_ftp_resources_yaml_path('ftp_resources.yaml')
 path_of_ftp_resources_dev_yaml = get_ftp_resources_yaml_path('ftp_resources_dev.yaml')
@@ -46,15 +47,16 @@ path_of_aws_resources_dev_yaml = get_ftp_resources_yaml_path('aws_resources_prod
 
 )
 def my_pipeline():
+    # clean_everything()
     all_s3_keys = get_files_from_ftp_and_save_to_s3()
 
     # some files might be not downloaded, if at least one thread of download_file_from_s3 will fail
     downloaded_files_with_s3_keys = all_s3_keys.map(download_file_from_s3)
-
+    #
     file_names = downloaded_files_with_s3_keys.map(crawler_parser)
-
-    # steps
-    file_names.map(run_all_steps)
+    #
+    # # steps
+    # file_names.map(run_all_steps)
 
 
 if __name__ == "__main__":
