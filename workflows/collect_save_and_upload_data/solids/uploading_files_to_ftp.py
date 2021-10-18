@@ -34,8 +34,8 @@ def uploading_files_to_ftp(context, ftp):
 
     # uploading example file to ftp server
     
-    # ftp.upload_if_newer('oup.xml.zip', 'oup.xml.zip')
-    # ftp.upload_if_newer('scoap3.archival.zip', 'scoap3.archival.zip')
+    ftp.upload_if_newer('oup.xml.zip', 'oup.xml.zip')
+    ftp.upload_if_newer('scoap3.archival.zip', 'scoap3.archival.zip')
     ftp.upload_if_newer('scoap3.pdf.zip', 'scoap3.pdf.zip')
 
     dirs_list = ftp.listdir(path)

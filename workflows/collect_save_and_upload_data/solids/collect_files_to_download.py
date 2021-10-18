@@ -11,7 +11,6 @@ from workflows.utils.generators import generate_mapping_key
 # In this way solids are ran parallel. However, we want to have dummy files created first, so
 # we passing Nothing as an output from create_dummy_dir to collect_files_to_download to set the order of solids.
 
-
 @solid(required_resource_keys={"ftp"},
        input_defs=[InputDefinition(name='ftp', dagster_type=FTPDagsterType),
                    InputDefinition("start", Nothing)
@@ -39,3 +38,5 @@ def collect_files_to_download(context, ftp) -> list:
                                     mapping_key=generate_mapping_key())
             else:
                 context.log.warning(f'File with invalid extension on FTP path={full_path}')
+
+

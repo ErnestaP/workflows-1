@@ -19,4 +19,3 @@ def get_files_from_ftp_and_save_to_s3():
     s3_keys = uploading_files_to_s3(unziped.collect())
     return s3_keys
 
-

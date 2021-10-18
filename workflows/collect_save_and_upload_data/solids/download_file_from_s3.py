@@ -33,6 +33,7 @@ def download_file_from_s3(context, s3_key):
     bucket_name = context.resources.aws["raw_files_bucket"]
 
     file_name = os.path.basename(s3_key)
+    context.log.error(s3_key)
     target_path = os.path.join(local_dir, file_name)
     try:
         s3_client.download_file(bucket_name, s3_key, target_path)
