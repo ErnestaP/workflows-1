@@ -46,7 +46,7 @@ path_of_aws_resources_dev_yaml = get_ftp_resources_yaml_path('aws_resources_prod
     ],
 
 )
-def my_pipeline():
+def rerun_solids_after_download_file_from_s3():
     # # clean_everything()
     # -----
     all_s3_keys = get_files_from_ftp_and_save_to_s3()
@@ -57,9 +57,5 @@ def my_pipeline():
 
 
 if __name__ == "__main__":
-    # start_presets_main
-    result = execute_pipeline(my_pipeline, preset="prod")
-    # solids can be run partly, the line below shows how to run composite_solid and it's ancestors.
-    # Note: solids has to be used in pipeline directly. For example, if we will put just collect_files_to_download
-    # we will get an error: No qualified solids to execute found for solid_selection=['*collect_files_to_download']
+    result = execute_pipeline(rerun_solids_after_download_file_from_s3, solid_selection=["download_file_from_s3*"], preset="prod")
     assert result.success
