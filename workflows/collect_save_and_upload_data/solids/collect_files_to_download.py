@@ -1,9 +1,8 @@
 import os
-from dagster import solid, InputDefinition, DynamicOutputDefinition, DynamicOutput, Nothing
-from workflows.dagster_types import FTPDagsterType
-
+from dagster import solid, DynamicOutputDefinition, DynamicOutput
 
 from workflows.utils.generators import generate_mapping_key
+
 
 # Passing Nothing type variable:
 # Solids create_dummy_dir and collect_files_to_download are not depending on each other, because
@@ -11,12 +10,9 @@ from workflows.utils.generators import generate_mapping_key
 # In this way solids are ran parallel. However, we want to have dummy files created first, so
 # we passing Nothing as an output from create_dummy_dir to collect_files_to_download to set the order of solids.
 
-@solid(required_resource_keys={"ftp"},
-       input_defs=[InputDefinition(name='ftp', dagster_type=FTPDagsterType),
-                   InputDefinition("start", Nothing)
-                   ],
-       output_defs=[DynamicOutputDefinition(dict)])
-def collect_files_to_download(context, ftp) -> list:
+# collecting files from local dir instead of FTP server.
+@solid(output_defs=[DynamicOutputDefinition(dict)])
+def collect_files_to_download(context) -> list:
     """
     Collects all the files in under the 'ftp_folder' folder.
     Files starting with a dot (.) are omitted.
@@ -25,18 +21,16 @@ def collect_files_to_download(context, ftp) -> list:
     """
 
     # make sure you're in root dir
-    ftp.chdir('/')
-    ftp_folder = context.resources.ftp["ftp_folder"]
-    for path, dirs, files in ftp.walk(ftp_folder):
-        for filename in files:
-            if filename.startswith('.'):
-                continue
-            full_path = os.path.join(path, filename)
-            context.log.info(full_path)
-            if filename.endswith('.zip') or filename == 'go.xml':
-                yield DynamicOutput(value={'file_path': full_path, 'ftp': ftp},
-                                    mapping_key=generate_mapping_key())
-            else:
-                context.log.warning(f'File with invalid extension on FTP path={full_path}')
+    current_dir = os.getcwd()
+    os.chdir(current_dir)
 
-
+    files = [file for file in os.listdir(current_dir) if os.path.isfile(file)]
+    for file in files:
+        if file.startswith('.'):
+            continue
+        full_path = os.path.join(current_dir, file)
+        if file.endswith('.zip') or file == 'go.xml':
+            yield DynamicOutput(value={'file_path': full_path},
+                                mapping_key=generate_mapping_key())
+        else:
+            context.log.warning(f'File with invalid extension on FTP path={full_path}')

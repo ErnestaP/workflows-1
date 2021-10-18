@@ -89,6 +89,7 @@ downloaded
 downloaded_from_s3
 jsons
 unziped_files
+workflows_tests/downloaded_from_s3
 
 # dev files
 oup.xml.zip
