@@ -88,7 +88,7 @@ workflows/resources/aws_resources.py
 downloaded
 downloaded_from_s3
 jsons
-unziped_files
+unzipped_files
 
 # dev files
 oup.xml.zip

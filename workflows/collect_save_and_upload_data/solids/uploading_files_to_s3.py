@@ -3,7 +3,7 @@ from dagster import solid, InputDefinition, String, DynamicOutputDefinition, Dyn
 import boto3
 
 from workflows.utils.generators import generate_mapping_key
-from workflows.constants import DUMMY_FILES_SUB_KEY, UNZIPED_FILES
+from workflows.constants import DUMMY_FILES_SUB_KEY, UNZIPPED_FILES
 
 
 @solid(required_resource_keys={"aws"},
@@ -35,7 +35,7 @@ def uploading_files_to_s3(context, unzipped_folder_path):
     file_names = [file_name for file_name in os.listdir(unzipped_folder_path) if
                   os.path.isfile(os.path.join(unzipped_folder_path, file_name))]
     for file_name in file_names:
-        path_to_file = os.path.join(pwd, f'{UNZIPED_FILES}/{grouping_folder}/{file_name}')
+        path_to_file = os.path.join(pwd, f'{UNZIPPED_FILES}/{grouping_folder}/{file_name}')
         key = f"{DUMMY_FILES_SUB_KEY}/{grouping_folder}/{file_name}"
         # s3_resource.Bucket(bucket_name).put_object(
         #     Key=key,

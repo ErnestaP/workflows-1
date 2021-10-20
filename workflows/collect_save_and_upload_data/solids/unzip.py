@@ -3,7 +3,7 @@ from dagster import solid, InputDefinition, String, Failure, EventMetadata, Outp
 import zipfile
 
 from workflows.utils.create_dir import create_dir
-from workflows.constants import UNZIPED_FILES
+from workflows.constants import UNZIPPED_FILES
 from workflows.utils.generators import generate_mapping_key
 
 
@@ -11,10 +11,10 @@ from workflows.utils.generators import generate_mapping_key
        output_defs=[OutputDefinition(String)])
 def unzip(context, file_path):
     cwd = os.getcwd()
-    dir_is_created = create_dir(context, cwd, UNZIPED_FILES)
+    dir_is_created = create_dir(context, cwd, UNZIPPED_FILES)
     file_name = os.path.basename(file_path)
     grouping_folder = file_name.split(".zip")[0]
-    path_for_unzipped_files = os.path.join(cwd, UNZIPED_FILES, grouping_folder)
+    path_for_unzipped_files = os.path.join(cwd, UNZIPPED_FILES, grouping_folder)
 
     if dir_is_created:
         try:
@@ -29,7 +29,7 @@ def unzip(context, file_path):
             context.log.error(f'Error while reading the file {file_path}: {e}')
     else:
         raise Failure(
-            description=f"{UNZIPED_FILES} is not created!",
+            description=f"{UNZIPPED_FILES} is not created!",
             metadata={
                 "filepath": EventMetadata.path(path_for_unzipped_files),
             },
