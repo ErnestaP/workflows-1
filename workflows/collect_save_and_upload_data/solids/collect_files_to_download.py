@@ -1,5 +1,5 @@
 import os
-from dagster import solid, InputDefinition, DynamicOutputDefinition, DynamicOutput, Nothing
+from dagster import solid, InputDefinition, DynamicOutputDefinition, OutputDefinition, Nothing
 from workflows.dagster_types import FTPDagsterType
 
 
@@ -15,7 +15,7 @@ from workflows.utils.generators import generate_mapping_key
        input_defs=[InputDefinition(name='ftp', dagster_type=FTPDagsterType),
                    InputDefinition("start", Nothing)
                    ],
-       output_defs=[DynamicOutputDefinition(dict)])
+       output_defs=[OutputDefinition(list)])
 def collect_files_to_download(context, ftp) -> list:
     """
     Collects all the files in under the 'ftp_folder' folder.
@@ -26,6 +26,7 @@ def collect_files_to_download(context, ftp) -> list:
 
     # make sure you're in root dir
     ftp.chdir('/')
+    result = []
     ftp_folder = context.resources.ftp["ftp_folder"]
     for path, dirs, files in ftp.walk(ftp_folder):
         for filename in files:
@@ -34,9 +35,11 @@ def collect_files_to_download(context, ftp) -> list:
             full_path = os.path.join(path, filename)
             context.log.info(full_path)
             if filename.endswith('.zip') or filename == 'go.xml':
-                yield DynamicOutput(value={'file_path': full_path, 'ftp': ftp},
-                                    mapping_key=generate_mapping_key())
+                result.append(full_path)
+                # yield DynamicOutput(value={'file_path': full_path, 'ftp': ftp},
+                #                     mapping_key=generate_mapping_key())
             else:
                 context.log.warning(f'File with invalid extension on FTP path={full_path}')
+    return result
 
 

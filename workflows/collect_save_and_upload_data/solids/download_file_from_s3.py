@@ -1,5 +1,5 @@
 import os
-from dagster import solid, InputDefinition, String
+from dagster import solid, InputDefinition
 import boto3
 
 from workflows.constants import LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3
@@ -7,10 +7,11 @@ from workflows.utils.create_dir import create_dir
 
 
 @solid(required_resource_keys={"aws"},
-       input_defs=[InputDefinition(name="s3_key", dagster_type=String)])
+       input_defs=[InputDefinition(name="s3_key", dagster_type=str)])
 def download_file_from_s3(context, s3_key):
     """Downloads file from s3 by received s3 key.
     Credentials for AWS are taken from aws_resources"""
+
     local_dir = os.path.join(os.getcwd(), LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3)
     create_dir(context, os.getcwd(), LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3)
     context.log.error(s3_key)
