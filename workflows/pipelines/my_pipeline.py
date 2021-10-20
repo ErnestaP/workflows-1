@@ -47,20 +47,14 @@ path_of_aws_resources_dev_yaml = get_ftp_resources_yaml_path('aws_resources_prod
 
 )
 def my_pipeline():
-    # # clean_everything()
-    # # -----
-    # all_s3_keys = get_files_from_ftp_and_save_to_s3()
-    #
-    # # some files might be not downloaded, if at least one thread of download_file_from_s3 will fail
-    # downloaded_files_with_s3_keys = all_s3_keys.map(download_file_from_s3)
-    # #
-    # file_names = downloaded_files_with_s3_keys.map(crawler_parser)
-    # #
-    # # # steps
-    # # file_names.map(run_all_steps)
-    # # -----
+    # clean_everything()
     all_s3_keys = get_files_from_ftp_and_save_to_s3()
     downloaded_files_with_s3_keys = all_s3_keys.map(download_file_from_s3)
+    file_names = downloaded_files_with_s3_keys.map(crawler_parser)
+    # # steps
+    # file_names.map(run_all_steps)
+
+
 if __name__ == "__main__":
     # start_presets_main
     result = execute_pipeline(my_pipeline, preset="prod")

@@ -3,23 +3,17 @@ from dagster import solid, InputDefinition, String
 import boto3
 
 from workflows.constants import LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3
-
-
-def create_local_dir_for_downloaded_files(context, local_dir):
-    if os.path.exists(local_dir):
-        context.log.warn(f'{LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3} folder already exists')
-        pass
-    else:
-        os.mkdir(LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3)
+from workflows.utils.create_dir import create_dir
 
 
 @solid(required_resource_keys={"aws"},
        input_defs=[InputDefinition(name="s3_key", dagster_type=String)])
 def download_file_from_s3(context, s3_key):
-    # creating local dir for downloaded files from s3
+    """Downloads file from s3 by received s3 key.
+    Credentials for AWS are taken from aws_resources"""
     local_dir = os.path.join(os.getcwd(), LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3)
-    create_local_dir_for_downloaded_files(context, local_dir)
-
+    create_dir(context, os.getcwd(), LOCAL_FOLDER_FOR_DOWNLOADED_FILES_FROM_S3)
+    context.log.error(s3_key)
     aws_access_key_id = context.resources.aws["aws_access_key_id"]
     aws_secret_access_key = context.resources.aws["aws_secret_access_key"]
     endpoint_url = context.resources.aws["endpoint_url"]
@@ -33,12 +27,13 @@ def download_file_from_s3(context, s3_key):
     bucket_name = context.resources.aws["raw_files_bucket"]
 
     file_name = os.path.basename(s3_key)
-    context.log.error(s3_key)
-    target_path = os.path.join(local_dir, file_name)
+    grouping_folder = os.path.basename(os.path.dirname(s3_key))
+    target_path = os.path.join(local_dir, grouping_folder, file_name)
+    create_dir(context, local_dir, grouping_folder)
     try:
         s3_client.download_file(bucket_name, s3_key, target_path)
-    except ValueError:
-        context.log.info(f'FAIL: File {s3_key} download fail')
+        context.log.info(f'OK: File {s3_key} downloaded successfully to {target_path}')
+    except Exception as e:
+        context.log.error(f'FAIL: File {s3_key} download fail : {e}')
     finally:
-        context.log.info(f'OK: File {s3_key} downloaded successfully')
         return s3_key
